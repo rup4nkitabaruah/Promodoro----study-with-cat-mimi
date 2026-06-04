@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study with Cat Mimi!!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width:100%; height:100%;
+  font-family:'Nunito',sans-serif;
+  background:#f2c4ce;
+  overflow-x:hidden;
+}
+
+body {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  padding:0;
+}
+
+/* ── TOP HEADER ── */
+.header {
+  width:100%;
+  padding:18px 40px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  flex-shrink:0;
+}
+
+.music-area { display:flex; align-items:center; gap:10px; z-index:2; }
+
+.headphone-btn {
+  background:none; border:none; cursor:pointer;
+  font-size:40px; line-height:1;
+  transition:transform .2s;
+  filter:hue-rotate(220deg) saturate(0.7);
+}
+.headphone-btn:hover { transform:scale(1.15) rotate(-8deg); }
+
+.now-playing {
+  background:white;
+  border:2.5px solid #c9a8c5;
+  border-radius:20px;
+  padding:5px 16px;
+  font-size:13px; font-weight:700; color:#7a5c8a;
+  min-width:180px; max-width:240px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  height:36px; display:flex; align-items:center;
+}
+.now-playing.idle { color:#b0a0b5; font-style:italic; font-weight:600; }
+
+.site-title {
+  position:absolute; left:50%; transform:translateX(-50%);
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(32px,4vw,52px);
+  color:#3a2a4a;
+  white-space:nowrap;
+  letter-spacing:.5px;
+}
+
+/* ── PIXEL CAT — full detailed version ── */
+.cat-wrap {
+  position:relative;
+  width:120px; height:130px;
+  flex-shrink:0;
+  z-index:2;
+  cursor:pointer;
+  animation:catBob 2.6s ease-in-out infinite;
+}
+.cat-wrap:hover { animation:catWiggle .5s ease-in-out 3; }
+
+@keyframes catBob {
+  0%,100%{ transform:translateY(0); }
+  40%    { transform:translateY(-8px); }
+  70%    { transform:translateY(3px); }
+}
+@keyframes catWiggle {
+  0%,100%{ transform:rotate(0) scale(1); }
+  25%    { transform:rotate(-12deg) scale(1.08); }
+  75%    { transform:rotate(12deg) scale(1.08); }
+}
+
+/* ── MAIN CONTENT AREA ── */
+.content-wrap {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:0 40px 30px;
+  gap:0;
+}
+
+/* ── PURPLE MAIN CARD ── */
+.main-card {
+  background:#7a6d9e;
+  border-radius:24px;
+  width:100%;
+  padding:28px 36px 32px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 8px 40px rgba(80,60,110,.22);
+  flex-shrink:0;
+}
+
+.stars-canvas {
+  position:absolute; inset:0;
+  pointer-events:none; overflow:hidden;
+  border-radius:24px;
+}
+.star {
+  position:absolute;
+  font-size:12px; opacity:.75;
+  animation:twinkle var(--d,2.5s) ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+}
+@keyframes twinkle {
+  0%,100%{ opacity:.8; transform:scale(1); }
+  50%    { opacity:.2; transform:scale(.5); }
+}
+
+/* floating decos */
+.deco { position:absolute; pointer-events:none; }
+.deco-star-r { right:60px; bottom:90px; font-size:30px;
+  animation:starFloat 4s ease-in-out infinite; }
+.deco-spark1 { left:110px; bottom:44px; font-size:22px; color:#fff;
+  animation:sparkA 3.5s ease-in-out infinite; animation-delay:.8s; }
+.deco-spark2 { right:90px; bottom:46px; font-size:28px; color:#fff;
+  animation:sparkA 2.8s ease-in-out infinite; animation-delay:1.4s; }
+.deco-spark3 { right:200px; top:20px; font-size:18px; color:#fff;
+  animation:sparkA 3s ease-in-out infinite; animation-delay:.3s; }
+@keyframes starFloat {
+  0%,100%{ transform:translateY(0) rotate(0deg); }
+  50%    { transform:translateY(-10px) rotate(18deg); }
+}
+@keyframes sparkA {
+  0%,100%{ opacity:1; transform:scale(1) rotate(0deg); }
+  50%    { opacity:.25; transform:scale(.6) rotate(25deg); }
+}
+
+/* ── MODES ROW ── */
+.modes-row {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:22px;
+  position:relative; z-index:2;
+  flex-wrap:wrap;
+}
+
+.clock-icon {
+  font-size:58px; line-height:1;
+  animation:clockTick 1s steps(1) infinite;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));
+}
+@keyframes clockTick {
+  0%,49% { transform:rotate(-5deg); }
+  50%,100%{ transform:rotate(5deg); }
+}
+.clock-icon.running { animation:clockSpin 2s linear infinite; }
+@keyframes clockSpin {
+  from{ transform:rotate(0deg); }
+  to  { transform:rotate(360deg); }
+}
+
+.mode-btn {
+  background:white; border:none; border-radius:50px;
+  padding:11px 26px;
+  font-family:'Fredoka One',cursive;
+  font-size:16px; color:#5a4570;
+  cursor:pointer;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+.mode-btn:hover { transform:translateY(-2px); box-shadow:0 5px 0 rgba(0,0,0,.14); }
+.mode-btn.active { background:#f2c4ce; color:#7a3060; box-shadow:0 3px 0 rgba(120,60,100,.2); }
+
+.add-note-btn {
+  margin-left:auto;
+  background:white; border:3px solid #2a1a3a;
+  border-radius:12px;
+  padding:11px 26px;
+  font-family:'Fredoka One',cursive;
+  font-size:16px; color:#2a1a3a;
+  cursor:pointer;
+  box-shadow:3px 3px 0 #2a1a3a;
+  transition:transform .15s,box-shadow .15s,background .18s;
+}
+.add-note-btn:hover { background:#f9eaff; transform:translate(-1px,-1px); box-shadow:4px 4px 0 #2a1a3a; }
+.add-note-btn:active { transform:translate(2px,2px); box-shadow:1px 1px 0 #2a1a3a; }
+
+/* ── TIMER BOX ── */
+.timer-box {
+  background:rgba(255,255,255,.16);
+  border-radius:18px;
+  min-height:210px;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  position:relative; z-index:2;
+  margin-bottom:24px;
+  border:1.5px solid rgba(255,255,255,.25);
+}
+
+.timer-display {
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(72px,9vw,110px);
+  color:white;
+  letter-spacing:6px;
+  text-shadow:0 4px 24px rgba(0,0,0,.22);
+}
+.timer-display.pulse { animation:bigPulse .6s ease-out; }
+@keyframes bigPulse {
+  0%  { transform:scale(1); }
+  40% { transform:scale(1.07); }
+  100%{ transform:scale(1); }
+}
+
+.session-label {
+  font-size:14px; font-weight:800;
+  color:rgba(255,255,255,.7);
+  margin-top:8px; letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+/* ── START BUTTON ── */
+.start-btn {
+  display:block; margin:0 auto;
+  background:white; border:none; border-radius:50px;
+  padding:17px 100px;
+  font-family:'Fredoka One',cursive;
+  font-size:24px; color:#5a3070;
+  cursor:pointer;
+  position:relative; z-index:2;
+  box-shadow:0 5px 0 rgba(0,0,0,.16);
+  transition:transform .15s,box-shadow .15s,background .2s;
+  letter-spacing:2px;
+}
+.start-btn:hover { transform:translateY(-3px); box-shadow:0 8px 0 rgba(0,0,0,.16); }
+.start-btn:active { transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.16); }
+.start-btn.running { background:#f2c4ce; color:#7a1040; }
+
+/* ── BOTTOM SECTION: 3 info tiles ── */
+.bottom-row {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:18px;
+  margin-top:22px;
+  flex-shrink:0;
+}
+
+.info-tile {
+  background:rgba(122,109,158,.55);
+  border-radius:18px;
+  padding:20px 24px;
+  border:1.5px solid rgba(255,255,255,.18);
+  position:relative;
+  overflow:hidden;
+}
+.info-tile h4 {
+  font-family:'Fredoka One',cursive;
+  font-size:16px; color:rgba(255,255,255,.85);
+  letter-spacing:.5px; margin-bottom:10px;
+}
+
+/* session counter tile */
+.counter-nums {
+  display:flex; gap:16px; align-items:flex-end;
+}
+.counter-big {
+  font-family:'Fredoka One',cursive;
+  font-size:48px; color:white; line-height:1;
+}
+.counter-label {
+  font-size:13px; font-weight:700; color:rgba(255,255,255,.6);
+  padding-bottom:6px;
+}
+
+/* tips tile */
+.tip-text {
+  font-size:13px; font-weight:600; color:rgba(255,255,255,.8);
+  line-height:1.6;
+}
+.tip-emoji { font-size:22px; margin-bottom:6px; display:block; }
+
+/* daily goal tile */
+.goal-bar-bg {
+  background:rgba(255,255,255,.2);
+  border-radius:8px; height:10px;
+  margin:6px 0 4px;
+}
+.goal-bar-fill {
+  background:#f2c4ce;
+  border-radius:8px; height:10px;
+  width:0%;
+  transition:width .5s ease;
+}
+.goal-meta {
+  display:flex; justify-content:space-between;
+  font-size:12px; font-weight:700; color:rgba(255,255,255,.65);
+  margin-top:4px;
+}
+.goal-btns { display:flex; gap:8px; margin-top:12px; }
+.goal-btn {
+  background:rgba(255,255,255,.2); border:1.5px solid rgba(255,255,255,.35);
+  border-radius:30px; padding:5px 14px;
+  font-family:'Fredoka One',cursive; font-size:13px; color:white;
+  cursor:pointer; transition:background .2s;
+}
+.goal-btn:hover { background:rgba(255,255,255,.35); }
+.goal-btn.active-goal { background:#f2c4ce; color:#7a3060; border-color:#f2c4ce; }
+
+/* ── NOTE MODAL ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(60,40,80,.5);
+  z-index:200;
+  align-items:center; justify-content:center;
+}
+.modal-overlay.open { display:flex; }
+
+.note-modal {
+  background:white; border-radius:20px;
+  width:min(500px,92vw); padding:26px;
+  box-shadow:0 16px 56px rgba(60,40,80,.3);
+  animation:popIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn {
+  from{ transform:scale(.8); opacity:0; }
+  to  { transform:scale(1); opacity:1; }
+}
+.note-modal h3 {
+  font-family:'Fredoka One',cursive;
+  color:#5a3070; font-size:22px; margin-bottom:14px;
+}
+.note-textarea {
+  width:100%; min-height:150px;
+  border:2px solid #d4b8e0; border-radius:12px;
+  padding:12px; font-family:'Nunito',sans-serif;
+  font-size:14px; color:#3a2a4a; resize:vertical; outline:none;
+  transition:border-color .2s;
+}
+.note-textarea:focus { border-color:#9a72b8; }
+.note-actions { display:flex; gap:10px; margin-top:14px; justify-content:flex-end; }
+.note-save,.note-close {
+  padding:10px 24px; border-radius:50px; border:none;
+  font-family:'Fredoka One',cursive; font-size:15px; cursor:pointer;
+  transition:transform .15s;
+}
+.note-save { background:#9a72b8; color:white; }
+.note-save:hover { transform:scale(1.04); }
+.note-close { background:#f0e8f8; color:#5a3070; }
+.note-close:hover { transform:scale(1.04); }
+.saved-notes { margin-top:14px; max-height:160px; overflow-y:auto; }
+.note-item {
+  background:#f9f0ff; border-radius:10px;
+  padding:8px 12px; margin-bottom:8px;
+  font-size:13px; color:#4a3060; position:relative;
+  border-left:3px solid #b88ad4;
+}
+.note-delete {
+  position:absolute; right:8px; top:6px;
+  background:none; border:none; cursor:pointer;
+  color:#c090d8; font-size:16px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <!-- Music -->
+  <div class="music-area">
+    <button class="headphone-btn" onclick="openPlaylist()" title="Open lofi playlist">🎧</button>
+    <div class="now-playing idle" id="nowPlaying">♪ click to play lofi</div>
+  </div>
+
+  <!-- Title -->
+  <h1 class="site-title">Study with Cat Mimi!!</h1>
+
+  <!-- Pixel Cat (detailed, matching reference image) -->
+  <div class="cat-wrap" id="catWrap" onclick="catClick()" title="meow~">
+    <svg viewBox="0 0 32 36" width="120" height="135" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated">
+      <!-- ears -->
+      <rect x="5"  y="0" width="5" height="5" fill="#111"/>
+      <rect x="22" y="0" width="5" height="5" fill="#111"/>
+      <!-- ear tips -->
+      <rect x="6"  y="0" width="3" height="3" fill="#0a0a0a"/>
+      <rect x="23" y="0" width="3" height="3" fill="#0a0a0a"/>
+      <!-- head -->
+      <rect x="5"  y="4"  width="22" height="16" fill="#111"/>
+      <!-- head sides detail -->
+      <rect x="3"  y="6"  width="2"  height="12" fill="#111"/>
+      <rect x="27" y="6"  width="2"  height="12" fill="#111"/>
+      <!-- forehead top -->
+      <rect x="7"  y="3"  width="18" height="2"  fill="#111"/>
+      <!-- eyes whites -->
+      <rect x="8"  y="7"  width="6" height="5" fill="#ffffff"/>
+      <rect x="18" y="7"  width="6" height="5" fill="#ffffff"/>
+      <!-- pupils (yellow) -->
+      <rect x="9"  y="8"  width="3" height="3" fill="#f5e000"/>
+      <rect x="19" y="8"  width="3" height="3" fill="#f5e000"/>
+      <!-- pupil slits -->
+      <rect x="10" y="8"  width="1" height="3" fill="#111"/>
+      <rect x="20" y="8"  width="1" height="3" fill="#111"/>
+      <!-- eye shine -->
+      <rect x="8"  y="7"  width="1" height="1" fill="#fff"/>
+      <rect x="18" y="7"  width="1" height="1" fill="#fff"/>
+      <!-- nose -->
+      <rect x="15" y="13" width="2" height="1" fill="#555"/>
+      <!-- whisker hints -->
+      <rect x="3"  y="13" width="4" height="1" fill="#2a2a2a"/>
+      <rect x="25" y="13" width="4" height="1" fill="#2a2a2a"/>
+      <rect x="2"  y="15" width="5" height="1" fill="#2a2a2a"/>
+      <rect x="25" y="15" width="5" height="1" fill="#2a2a2a"/>
+      <!-- body -->
+      <rect x="4"  y="19" width="24" height="15" fill="#111"/>
+      <!-- body sides -->
+      <rect x="2"  y="21" width="2"  height="11" fill="#111"/>
+      <rect x="28" y="21" width="2"  height="11" fill="#111"/>
+      <!-- neck/chest -->
+      <rect x="6"  y="18" width="20" height="3"  fill="#111"/>
+      <!-- front paws -->
+      <rect x="5"  y="32" width="7" height="4" fill="#111"/>
+      <rect x="20" y="32" width="7" height="4" fill="#111"/>
+      <!-- paw toes -->
+      <rect x="5"  y="35" width="2" height="1" fill="#1a1a1a"/>
+      <rect x="8"  y="35" width="2" height="1" fill="#1a1a1a"/>
+      <rect x="20" y="35" width="2" height="1" fill="#1a1a1a"/>
+      <rect x="23" y="35" width="2" height="1" fill="#1a1a1a"/>
+      <!-- tail (curled right) -->
+      <rect x="29" y="22" width="2" height="7" fill="#111"/>
+      <rect x="28" y="28" width="2" height="3" fill="#111"/>
+      <rect x="27" y="30" width="2" height="2" fill="#111"/>
+      <!-- chest lighter patch -->
+      <rect x="12" y="22" width="8" height="6"  fill="#1a1a1a"/>
+    </svg>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap">
+
+  <!-- PURPLE CARD -->
+  <div class="main-card">
+    <div class="stars-canvas" id="starsBg"></div>
+
+    <!-- decorative sparkles -->
+    <span class="deco deco-star-r">⭐</span>
+    <span class="deco deco-spark1">✦</span>
+    <span class="deco deco-spark2">✦</span>
+    <span class="deco deco-spark3">✦</span>
+
+    <!-- MODES ROW -->
+    <div class="modes-row">
+      <span class="clock-icon" id="clockIcon">⏱️</span>
+      <button class="mode-btn active" data-mode="pomodoro"   onclick="setMode(this)">Pomodoro</button>
+      <button class="mode-btn"        data-mode="longbreak"  onclick="setMode(this)">Long Break</button>
+      <button class="mode-btn"        data-mode="shortbreak" onclick="setMode(this)">Short Break</button>
+      <button class="add-note-btn" onclick="openNotes()">Add Note</button>
+    </div>
+
+    <!-- TIMER -->
+    <div class="timer-box">
+      <div class="timer-display" id="timerDisplay">25:00</div>
+      <div class="session-label" id="sessionLabel">Focus Time</div>
+    </div>
+
+    <!-- START -->
+    <button class="start-btn" id="startBtn" onclick="toggleTimer()">START</button>
+  </div>
+
+  <!-- BOTTOM TILES -->
+  <div class="bottom-row">
+
+    <!-- Sessions counter -->
+    <div class="info-tile">
+      <h4>🍅 Today's Sessions</h4>
+      <div class="counter-nums">
+        <div class="counter-big" id="sessionCount">0</div>
+        <div class="counter-label">completed</div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:.5px;">
+        Keep going, Mimi believes in you! 🐱
+      </div>
+    </div>
+
+    <!-- Daily goal -->
+    <div class="info-tile">
+      <h4>🎯 Daily Goal</h4>
+      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:4px;">Target sessions:</div>
+      <div class="goal-btns">
+        <button class="goal-btn active-goal" data-goal="4"  onclick="setGoal(this)">4</button>
+        <button class="goal-btn" data-goal="6"  onclick="setGoal(this)">6</button>
+        <button class="goal-btn" data-goal="8"  onclick="setGoal(this)">8</button>
+        <button class="goal-btn" data-goal="10" onclick="setGoal(this)">10</button>
+      </div>
+      <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
+      <div class="goal-meta">
+        <span id="goalDone">0 done</span>
+        <span id="goalTotal">/ 4 goal</span>
+      </div>
+    </div>
+
+    <!-- Mimi tips -->
+    <div class="info-tile">
+      <h4>💡 Mimi's Tip</h4>
+      <span class="tip-emoji" id="tipEmoji">🌸</span>
+      <div class="tip-text" id="tipText">Take a deep breath before you start. A calm mind studies better!</div>
+      <button class="goal-btn" style="margin-top:12px;" onclick="newTip()">New tip ✨</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="modal-overlay" id="noteModal">
+  <div class="note-modal">
+    <h3>📝 My Study Notes</h3>
+    <textarea class="note-textarea" id="noteInput" placeholder="Write your thoughts, tasks, or reminders..."></textarea>
+    <div class="note-actions">
+      <button class="note-close" onclick="closeNotes()">Close</button>
+      <button class="note-save"  onclick="saveNote()">Save Note ✨</button>
+    </div>
+    <div class="saved-notes" id="savedNotes"></div>
+  </div>
+</div>
+
+<script>
+const PLAYLIST_URL = "https://open.spotify.com/playlist/37i9dQZF1DX8Uebhn9wzrS";
+
+const MODES = {
+  pomodoro:   { label:"Focus Time",  mins:25 },
+  longbreak:  { label:"Long Break",  mins:10 },
+  shortbreak: { label:"Short Break", mins:5  },
+};
+
+const TIPS = [
+  { e:"🌸", t:"Take a deep breath before you start. A calm mind studies better!" },
+  { e:"💧", t:"Stay hydrated! Drink a glass of water every session." },
+  { e:"📵", t:"Put your phone face-down. Out of sight, out of mind." },
+  { e:"🎯", t:"Set one clear goal per Pomodoro. One thing at a time!" },
+  { e:"🌿", t:"A tidy desk = a tidy mind. Clear your space first." },
+  { e:"🦋", t:"Every expert was once a beginner. Keep going!" },
+  { e:"🌙", t:"Short breaks are not wasted time — they recharge your brain." },
+  { e:"⭐", t:"Reward yourself after hitting your daily goal. You deserve it!" },
+  { e:"🎵", t:"Lofi music can boost focus. Let the beats carry you through." },
+  { e:"😸", t:"Mimi is proud of you just for showing up today. Keep it up!" },
+];
+
+let currentMode   = "pomodoro";
+let totalSecs     = 25 * 60;
+let remainSecs    = totalSecs;
+let timerRunning  = false;
+let timerInterval = null;
+let sessionCount  = parseInt(localStorage.getItem("mimi_sessions") || "0");
+let dailyGoal     = parseInt(localStorage.getItem("mimi_goal") || "4");
+let notes         = JSON.parse(localStorage.getItem("mimi_notes") || "[]");
+let tipIdx        = 0;
+
+/* ── STARS ── */
+(function() {
+  const c = document.getElementById("starsBg");
+  const chars = ["★","✦","·","⋆","*"];
+  for (let i = 0; i < 55; i++) {
+    const s = document.createElement("span");
+    s.className = "star";
+    s.textContent = chars[Math.floor(Math.random()*chars.length)];
+    s.style.cssText = `left:${Math.random()*97}%;top:${Math.random()*93}%;font-size:${7+Math.random()*9}px;color:${Math.random()>.4?"#e8d87a":"rgba(255,255,255,.4)"};--d:${2+Math.random()*3.5}s;--delay:-${Math.random()*5}s;`;
+    c.appendChild(s);
+  }
+})();
+
+/* ── MODE ── */
+function setMode(btn) {
+  if (timerRunning) stopTimer();
+  document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  currentMode = btn.dataset.mode;
+  totalSecs = MODES[currentMode].mins * 60;
+  remainSecs = totalSecs;
+  document.getElementById("sessionLabel").textContent = MODES[currentMode].label;
+  updateDisplay();
+}
+
+/* ── TIMER ── */
+function toggleTimer() { timerRunning ? pauseTimer() : startTimer(); }
+
+function startTimer() {
+  if (remainSecs === 0) remainSecs = totalSecs;
+  timerRunning = true;
+  document.getElementById("startBtn").textContent = "PAUSE";
+  document.getElementById("startBtn").classList.add("running");
+  document.getElementById("clockIcon").classList.add("running");
+  timerInterval = setInterval(tick, 1000);
+}
+function pauseTimer() {
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById("startBtn").textContent = "START";
+  document.getElementById("startBtn").classList.remove("running");
+  document.getElementById("clockIcon").classList.remove("running");
+}
+function stopTimer() {
+  pauseTimer(); remainSecs = totalSecs; updateDisplay();
+}
+function tick() {
+  remainSecs--;
+  updateDisplay();
+  if (remainSecs <= 0) {
+    remainSecs = 0;
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerRunning = false;
+    onTimerEnd();
+  }
+}
+function onTimerEnd() {
+  document.getElementById("startBtn").textContent = "START";
+  document.getElementById("startBtn").classList.remove("running");
+  document.getElementById("clockIcon").classList.remove("running");
+  if (currentMode === "pomodoro") {
+    sessionCount++;
+    localStorage.setItem("mimi_sessions", sessionCount);
+    updateGoalUI();
+  }
+  const el = document.getElementById("timerDisplay");
+  el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function ringBell(startTime) {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(880, startTime);
+      osc.frequency.exponentialRampToValueAtTime(440, startTime + 0.8);
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.7, startTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 1.2);
+      osc.start(startTime);
+      osc.stop(startTime + 1.2);
+    }
+    ringBell(ctx.currentTime);
+    ringBell(ctx.currentTime + 1.4);
+    ringBell(ctx.currentTime + 2.8);
+  } catch(e){}
+}
+
+function updateDisplay() {
+  const m = String(Math.floor(remainSecs/60)).padStart(2,"0");
+  const s = String(remainSecs%60).padStart(2,"0");
+  document.getElementById("timerDisplay").textContent = `${m}:${s}`;
+}
+
+/* ── GOAL ── */
+function setGoal(btn) {
+  document.querySelectorAll(".goal-btn[data-goal]").forEach(b => b.classList.remove("active-goal"));
+  btn.classList.add("active-goal");
+  dailyGoal = parseInt(btn.dataset.goal);
+  localStorage.setItem("mimi_goal",""+dailyGoal);
+  updateGoalUI();
+}
+function updateGoalUI() {
+  document.getElementById("sessionCount").textContent = sessionCount;
+  const pct = Math.min(100, (sessionCount/dailyGoal)*100);
+  document.getElementById("goalBar").style.width = pct+"%";
+  document.getElementById("goalDone").textContent  = sessionCount+" done";
+  document.getElementById("goalTotal").textContent = "/ "+dailyGoal+" goal";
+  document.querySelectorAll(".goal-btn[data-goal]").forEach(b => {
+    b.classList.toggle("active-goal", parseInt(b.dataset.goal)===dailyGoal);
+  });
+}
+
+/* ── TIPS ── */
+function newTip() {
+  tipIdx = (tipIdx + 1) % TIPS.length;
+  document.getElementById("tipEmoji").textContent = TIPS[tipIdx].e;
+  document.getElementById("tipText").textContent  = TIPS[tipIdx].t;
+}
+
+/* ── MUSIC ── */
+function openPlaylist() {
+  window.open(PLAYLIST_URL,"_blank");
+  const songs = ["lofi hip hop radio 🎵","chill beats to study 🎶","rainy day café ☕","night owl lofi 🦉","focus flow 🌙","cozy study vibes 📚"];
+  const np = document.getElementById("nowPlaying");
+  np.textContent = songs[Math.floor(Math.random()*songs.length)];
+  np.classList.remove("idle");
+}
+
+/* ── CAT ── */
+function catClick() {
+  const c = document.getElementById("catWrap");
+  c.style.animation = "none"; void c.offsetWidth;
+  c.style.animation = "catWiggle .5s ease-in-out 3";
+  setTimeout(()=>{ c.style.animation = "catBob 2.6s ease-in-out infinite"; }, 1600);
+}
+
+/* ── NOTES ── */
+function openNotes()  { document.getElementById("noteModal").classList.add("open"); renderNotes(); }
+function closeNotes() { document.getElementById("noteModal").classList.remove("open"); document.getElementById("noteInput").value=""; }
+function saveNote() {
+  const txt = document.getElementById("noteInput").value.trim();
+  if (!txt) return;
+  notes.unshift({ text:txt, time:new Date().toLocaleTimeString() });
+  localStorage.setItem("mimi_notes", JSON.stringify(notes));
+  document.getElementById("noteInput").value = "";
+  renderNotes();
+}
+function deleteNote(i) {
+  notes.splice(i,1);
+  localStorage.setItem("mimi_notes", JSON.stringify(notes));
+  renderNotes();
+}
+function renderNotes() {
+  const c = document.getElementById("savedNotes");
+  if (!notes.length) { c.innerHTML=""; return; }
+  c.innerHTML = notes.map((n,i)=>`
+    <div class="note-item">
+      <button class="note-delete" onclick="deleteNote(${i})">✕</button>
+      <div style="font-weight:700;font-size:11px;color:#9a72b8;margin-bottom:4px">${n.time}</div>
+      <div>${n.text.replace(/</g,"&lt;")}</div>
+    </div>`).join("");
+}
+
+document.getElementById("noteModal").addEventListener("click",function(e){ if(e.target===this) closeNotes(); });
+
+// init
+updateDisplay();
+updateGoalUI();
+</script>
+</body>
+</html>
